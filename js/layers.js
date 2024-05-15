@@ -129,6 +129,7 @@ addLayer("main", {
             title: "the garden",
             description: "buy a nice cute garden for the cats to explore",
             cost: new Decimal(25),
+            effectDisplay4() {},
             unlocked() { return (hasMilestone('catfood', 2)) },
         },
     },

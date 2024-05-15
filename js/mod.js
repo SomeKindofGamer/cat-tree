@@ -13,11 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-    num: "1.0",
+    num: "1.0.1",
     name: "Cat Tree",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <h3>v1.0.1</h3><br>
+		- fixed bug where 1 flower wouldn't give its boost<br>
+        - garden upgrade now says the debuff<br>
 	<h3>v1.0</h3><br>
 		- what<br>
 		`
@@ -49,6 +52,7 @@ function getPointGen() {
     if (hasMilestone('catfood', 0)) gain = gain.mul(2)
     if (hasMilestone('catfood', 1)) gain = gain.mul(2.5)
     if (hasMilestone('catfood', 2)) gain = gain.mul(3)
+    if (hasMilestone('garden', 0)) gain = gain.mul(3)
     return gain
 }
 

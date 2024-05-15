@@ -184,6 +184,7 @@ function loadVue() {
 				<span v-if="layers[layer].upgrades[data].effectDisplay"><br>adsense is making you: <span v-html="run(layers[layer].upgrades[data].effectDisplay, layers[layer].upgrades[data])"></span></span>
 				<span v-if="layers[layer].upgrades[data].effectDisplay2"><br>???: <span v-html="run(layers[layer].upgrades[data].effectDisplay2, layers[layer].upgrades[data])"></span></span>
 				<span v-if="layers[layer].upgrades[data].effectDisplay3"><br>multiplying your monies by: <span v-html="run(layers[layer].upgrades[data].effectDisplay3, layers[layer].upgrades[data])"></span></span>
+				<span v-if="layers[layer].upgrades[data].effectDisplay4"><br>DEBUFF: the cat price will raise alot due to inflation</span>
 				<br><br>Cost: {{ formatWhole(tmp[layer].upgrades[data].cost) }} {{(tmp[layer].upgrades[data].currencyDisplayName ? tmp[layer].upgrades[data].currencyDisplayName : tmp[layer].resource)}}
 			</span>
 			<tooltip v-if="tmp[layer].upgrades[data].tooltip" :text="tmp[layer].upgrades[data].tooltip"></tooltip>
