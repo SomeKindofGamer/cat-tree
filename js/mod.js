@@ -13,11 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-    num: "1.0.1",
+    num: "1.1",
     name: "Cat Tree",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <h3>v1.1</h3><br>
+		- THE PORTAL.<br>
+        - Flower Upgrades!<br>
+        - More achievements<br>
+        - Fixed bug where all the prestige buttons would say +0<br>
+        - Fixed bug where garden upgrade would always be visible<br>
     <h3>v1.0.1</h3><br>
 		- fixed bug where 1 flower wouldn't give its boost<br>
         - garden upgrade now says the debuff<br>
@@ -49,10 +55,17 @@ function getPointGen() {
     if (hasUpgrade('main', 12)) gain = gain.times(upgradeEffect('main', 12))
     if (hasUpgrade('main', 13)) gain = gain.times(upgradeEffect('main', 13))
     if (hasUpgrade('main', 22)) gain = gain.times(upgradeEffect('main', 22))
+    if (hasUpgrade('main', 32)) gain = gain.times(upgradeEffect('main', 32))
+    if (hasUpgrade('main', 33)) gain = gain.mul(3.5)
     if (hasMilestone('catfood', 0)) gain = gain.mul(2)
     if (hasMilestone('catfood', 1)) gain = gain.mul(2.5)
     if (hasMilestone('catfood', 2)) gain = gain.mul(3)
+    if (hasMilestone('catfood', 4)) gain = gain.mul(3)
     if (hasMilestone('garden', 0)) gain = gain.mul(3)
+    if (hasMilestone('garden', 3)) gain = gain.mul(2)
+    if (hasUpgrade('garden', 11)) gain = gain.mul(3.451)
+    if (hasUpgrade('garden', 12)) gain = gain.mul(5)
+    if (hasUpgrade('portal', 11)) gain = gain.times(upgradeEffect('portal', 11))
     return gain
 }
 

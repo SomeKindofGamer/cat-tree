@@ -22,6 +22,21 @@ function getResetGain(layer, useType = null) {
         let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1))
         gain = gain.times(tmp[layer].directMult)
         return gain.floor().sub(player[layer].points).add(1).max(1);
+    } else if (type == "catfood") {
+        if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) return decimalOne
+        let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1))
+        gain = gain.times(tmp[layer].directMult)
+        return gain.floor().sub(player[layer].points).add(1).max(1);
+    } else if (type == "garden") {
+        if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) return decimalOne
+        let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1))
+        gain = gain.times(tmp[layer].directMult)
+        return gain.floor().sub(player[layer].points).add(1).max(1);
+    } else if (type == "essence") {
+        if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) return decimalOne
+        let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1))
+        gain = gain.times(tmp[layer].directMult)
+        return gain.floor().sub(player[layer].points).add(1).max(1);
     } else if (type == "normal") {
         if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return decimalZero
         let gain = tmp[layer].baseAmount.div(tmp[layer].requires).pow(tmp[layer].exponent).times(tmp[layer].gainMult).pow(tmp[layer].gainExp)
@@ -70,6 +85,13 @@ function getNextAt(layer, canMax = false, useType = null) {
         if (tmp[layer].roundUpCost) cost = cost.ceil()
         return cost;
     } else if (type == "garden") {
+        if (!tmp[layer].canBuyMax) canMax = false
+        let amt = player[layer].points.plus((canMax && tmp[layer].baseAmount.gte(tmp[layer].nextAt)) ? tmp[layer].resetGain : 0).div(tmp[layer].directMult)
+        let extraCost = Decimal.pow(tmp[layer].base, amt.pow(tmp[layer].exponent).div(tmp[layer].gainExp)).times(tmp[layer].gainMult)
+        let cost = extraCost.times(tmp[layer].requires).max(tmp[layer].requires)
+        if (tmp[layer].roundUpCost) cost = cost.ceil()
+        return cost;
+    } else if (type == "essence") {
         if (!tmp[layer].canBuyMax) canMax = false
         let amt = player[layer].points.plus((canMax && tmp[layer].baseAmount.gte(tmp[layer].nextAt)) ? tmp[layer].resetGain : 0).div(tmp[layer].directMult)
         let extraCost = Decimal.pow(tmp[layer].base, amt.pow(tmp[layer].exponent).div(tmp[layer].gainExp)).times(tmp[layer].gainMult)
@@ -153,6 +175,8 @@ function canReset(layer) {
         return tmp[layer].baseAmount.gte(tmp[layer].nextAt)
     else if (tmp[layer].type == "garden")
         return tmp[layer].baseAmount.gte(tmp[layer].nextAt)
+    else if (tmp[layer].type == "essence")
+        return tmp[layer].baseAmount.gte(tmp[layer].nextAt)
     else
         return false
 }
@@ -220,6 +244,74 @@ function doReset(layer, force = false) {
             gain = (tmp[layer].canBuyMax ? gain : 1)
         }
         if (tmp[layer].type == "garden") {
+            if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
+            gain = (tmp[layer].canBuyMax ? gain : 1)
+        }
+
+
+        if (layers[layer].onPrestige)
+            run(layers[layer].onPrestige, layers[layer], gain)
+
+        addPoints(layer, gain)
+        updateMilestones(layer)
+        updateAchievements(layer)
+
+        if (!player[layer].unlocked) {
+            player[layer].unlocked = true;
+            needCanvasUpdate = true;
+
+            if (tmp[layer].increaseUnlockOrder) {
+                lrs = tmp[layer].increaseUnlockOrder
+                for (lr in lrs)
+                    if (!player[lrs[lr]].unlocked) player[lrs[lr]].unlockOrder++
+            }
+        }
+
+    }
+
+    if (run(layers[layer].resetsNothing, layers[layer])) return
+    tmp[layer].baseAmount = decimalZero // quick fix
+
+
+    for (layerResetting in layers) {
+        if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) completeChallenge(layerResetting)
+    }
+
+    player.points = (row == 0 ? decimalZero : getStartPoints())
+
+    for (let x = row; x >= 0; x--) rowReset(x, layer)
+    for (r in OTHER_LAYERS) {
+        rowReset(r, layer)
+    }
+
+    player[layer].resetTime = 0
+
+    updateTemp()
+    updateTemp()
+}
+
+function doReset(layer, force = false) {
+    if (tmp[layer].type == "none") return
+    let row = tmp[layer].row
+    if (!force) {
+
+        if (tmp[layer].canReset === false) return;
+
+        if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return;
+        let gain = tmp[layer].resetGain
+        if (tmp[layer].type == "static") {
+            if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
+            gain = (tmp[layer].canBuyMax ? gain : 1)
+        }
+        if (tmp[layer].type == "catfood") {
+            if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
+            gain = (tmp[layer].canBuyMax ? gain : 1)
+        }
+        if (tmp[layer].type == "garden") {
+            if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
+            gain = (tmp[layer].canBuyMax ? gain : 1)
+        }
+        if (tmp[layer].type == "essence") {
             if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
             gain = (tmp[layer].canBuyMax ? gain : 1)
         }
