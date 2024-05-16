@@ -295,6 +295,23 @@ function loadVue() {
 		`,
     });
 
+    Vue.component('portal-prestige-button', {
+        props: ['layer', 'data'],
+        template: `
+			<button v-if="(tmp[layer].type !== 'none')" 
+				v-bind:class="{ [layer]: true, reset: true, locked: !tmp[layer].canReset, can: tmp[layer].canReset}"
+				v-bind:style="[
+					tmp[layer].canReset ? {
+						'background': 'linear-gradient(#5b1d75, #b64be3)'
+					} : {},
+					tmp[layer].componentStyles['prestige-button']
+				]"
+				v-html="prestigeButtonText(layer)" 
+				v-on:click="doReset(layer)">
+			</button>
+		`,
+    });
+
 
 
     // Displays the main resource for the layer
