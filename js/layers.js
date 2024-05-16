@@ -598,7 +598,7 @@ addLayer("portal", {
             requirementDescription: "THIS IS JUST THE START (1)",
             effectDescription: "Unlock Essence Upgrades",
             done() {
-                return player.garden.points.gte(1)
+                return player.portal.points.gte(1)
             }
         },
     },
