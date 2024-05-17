@@ -738,7 +738,7 @@ addLayer("a", {
 
         31: {
             name: "THE PORTAL!",
-            done() { hasUpgrade('garden', 21) },
+            done() { hasMilestone('garden', 4) },
             tooltip: "UNLOCK THE PORTAL!", // Showed when the achievement is completed
             onComplete() { player.a.points = player.a.points.add(1) }
         },
